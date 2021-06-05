@@ -20,7 +20,7 @@ UI.prototype.addBookToList = function(book) {
     <td>${book.title}</td>
     <td>${book.author}</td>
     <td>${book.isbn}</td>
-    <td><a href="#">X</td>
+    <td><a href="#" class="delete">X</td>
   `;
 
   // Append child to bookList element
@@ -71,6 +71,13 @@ function clearMsg() {
   }
 }
 
+// Function to delete book item from book list
+UI.prototype.deleteBookItem = function(target) {
+  if (target.className === 'delete') {
+    target.parentElement.parentElement.remove();
+  }
+}
+
 // Add event listener on submit button
 document.addEventListener('submit', function(e) {
 
@@ -99,9 +106,23 @@ document.addEventListener('submit', function(e) {
     ui.clearInputFields();
 
     // Display message
-    ui.displayMessage('success', 'Book successfully added');
+    ui.displayMessage('success', 'Book added');
   }
 
   e.preventDefault();
 });
 
+// Add Event Listener on delete buttons
+document.getElementById('book-list').addEventListener('click', function(e){
+
+  // Instantiate UI object
+  const ui = new UI();
+
+  // Call function to delete book item
+  ui.deleteBookItem(e.target);
+
+  // Display message
+  ui.displayMessage('success', 'Book item deleted');
+
+  e.preventDefault();
+})
