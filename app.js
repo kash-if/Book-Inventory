@@ -106,7 +106,7 @@ document.addEventListener('submit', function(e) {
     ui.clearInputFields();
 
     // Display message
-    ui.displayMessage('success', 'Book added');
+    ui.displayMessage('success', 'Book added!');
   }
 
   e.preventDefault();
@@ -122,7 +122,7 @@ document.getElementById('book-list').addEventListener('click', function(e){
   ui.deleteBookItem(e.target);
 
   // Display message
-  ui.displayMessage('success', 'Book item deleted');
+  ui.displayMessage('success', 'Book removed!');
 
   e.preventDefault();
 })
