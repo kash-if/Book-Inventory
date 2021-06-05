@@ -48,7 +48,6 @@ UI.prototype.displayMessage = function(className, text) {
 
   // Add text message to div element
   msgElement.appendChild(document.createTextNode(text));
-  console.log(msgElement);
 
   // Get container class element
   const container = document.querySelector('.container');
@@ -78,6 +77,58 @@ UI.prototype.deleteBookItem = function(target) {
   }
 }
 
+// Storage contructor
+function Storage() {
+}
+  
+Storage.getBooksFromLS = function() {
+  let bookList;
+  if (localStorage.getItem('book') === null) {
+    bookList = [];
+  }
+  else {
+    bookList = JSON.parse(localStorage.getItem('book'));
+  }
+  return bookList;
+};
+
+Storage.displayBookFromLS = function() {
+  const bookList = Storage.getBooksFromLS();
+  if (bookList !== null) {
+    bookList.forEach(function(book) {
+      // Instantiate UI object
+      const ui = new UI();   
+      ui.addBookToList(book);
+    })
+  }
+};
+
+Storage.addBookToLS = function(book) {
+  const bookList = Storage.getBooksFromLS();
+  bookList.push(book);
+  localStorage.setItem('book', JSON.stringify(bookList));
+}
+
+Storage.removeBookFromLS = function(isbn) {
+  const bookList = Storage.getBooksFromLS();
+  console.log(bookList);
+  if (bookList !== null) {
+    bookList.forEach(function(book, index) {
+      if (book.isbn === isbn) {
+        // console.log('true');
+        bookList.splice(index,1);
+      }
+    })
+    // console.log(bookList);
+    localStorage.setItem('book', JSON.stringify(bookList));
+  }
+}
+
+//Add event listener on document load
+document.addEventListener('DOMContentLoaded', function(){
+  Storage.displayBookFromLS();
+})
+
 // Add event listener on submit button
 document.addEventListener('submit', function(e) {
 
@@ -101,9 +152,12 @@ document.addEventListener('submit', function(e) {
   
     // Call function addBookToList for displaying book data
     ui.addBookToList(book);
-  
+    
     // Call function clearInputFields 
     ui.clearInputFields();
+
+    // Call function to add book in Local Storage
+    Storage.addBookToLS(book);
 
     // Display message
     ui.displayMessage('success', 'Book added!');
@@ -120,6 +174,9 @@ document.getElementById('book-list').addEventListener('click', function(e){
 
   // Call function to delete book item
   ui.deleteBookItem(e.target);
+
+  // Call function to remove book from Local Storage
+  Storage.removeBookFromLS(e.target.parentElement.previousElementSibling.textContent);
 
   // Display message
   ui.displayMessage('success', 'Book removed!');

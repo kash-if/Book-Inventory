@@ -46,7 +46,6 @@ class UI {
 
     // Add text message to div element
     msgElement.appendChild(document.createTextNode(text));
-    console.log(msgElement);
 
     // Get container class element
     const container = document.querySelector('.container');
@@ -76,6 +75,53 @@ function clearMsg() {
   }
 }
 
+class Storage {
+
+  static getBooks() {
+    let books;
+    if (localStorage.getItem('book') === null) {
+      books = [];
+    }
+    else {
+      books = JSON.parse(localStorage.getItem('book'));
+    }
+    return books;
+  }
+
+  static addBook(book) {
+    const bookList = Storage.getBooks();
+    bookList.push(book);
+    localStorage.setItem('book', JSON.stringify(bookList));
+  }
+
+  static displayBooks() {
+    const bookList = Storage.getBooks();
+    if (bookList !== null) {
+      bookList.forEach(function (book) {
+      const ui = new UI;
+      ui.addBookToList(book);
+      });
+    }
+  }
+
+  static removeBook(ispn) {
+    const bookList = Storage.getBooks();
+    if (bookList !== null) {
+      bookList.forEach(function(book, index) {
+        if (book.ispn = ispn) {
+          bookList.splice(index,1);
+          localStorage.setItem('book', JSON.stringify(bookList));
+        }
+      });
+    }
+  }
+}
+
+// Add event listener on document load
+document.addEventListener('DOMContentLoaded', function() {
+  Storage.displayBooks();
+})
+
 // Add event listener on submit button
 document.addEventListener('submit', function(e) {
 
@@ -99,7 +145,9 @@ document.addEventListener('submit', function(e) {
   
     // Call function addBookToList for displaying book data
     ui.addBookToList(book);
-  
+    
+    // Call function to add book in local storage
+    Storage.addBook(book);
     // Call function clearInputFields 
     ui.clearInputFields();
 
@@ -118,6 +166,9 @@ document.getElementById('book-list').addEventListener('click', function(e){
 
   // Call function to delete book item
   ui.deleteBookItem(e.target);
+
+  // Get ISPN of book item
+  Storage.removeBook(e.target.parentElement.previousElementSibling.textContent);
 
   // Display message
   ui.displayMessage('success', 'Book removed!');
